@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  HOSPITAL_MANAGER
+  WAREHOUSE_STAFF
+  DRIVER
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REJECTED
+}
+
+enum ShipmentStatus {
+  PREPARING
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(HOSPITAL_MANAGER)
+  hospitalId String?
+  hospital  Hospital? @relation(fields: [hospitalId], references: [id])
+  auditLogs AuditLog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Hospital {
+  id          String   @id @default(uuid())
+  name        String
+  location    String   // Address or JSON coordinates
+  contactInfo String
+  creditLimit Decimal  @default(0)
+  balance     Decimal  @default(0)
+  users       User[]
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Inventory {
+  id              String   @id @default(uuid())
+  sku             String   @unique // Stock Keeping Unit
+  name            String
+  description     String?
+  batchNumber     String
+  expiryDate      DateTime
+  quantity        Int
+  warehouseLocation String // e.g., "A1-B2-S3"
+  version         Int      @default(0) // Optimistic Locking
+  orderItems      OrderItem[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([sku])
+  @@index([expiryDate])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  hospitalId      String
+  hospital        Hospital    @relation(fields: [hospitalId], references: [id])
+  status          OrderStatus @default(PENDING)
+  totalPrice      Decimal
+  items           OrderItem[]
+  shipment        Shipment?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String    @id @default(uuid())
+  orderId     String
+  order       Order     @relation(fields: [orderId], references: [id])
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  quantity    Int
+}
+
+model Shipment {
+  id             String         @id @default(uuid())
+  orderId        String         @unique
+  order          Order          @relation(fields: [orderId], references: [id])
+  driverId       String // Link to User (Driver) or External ID
+  vehicleId      String
+  status         ShipmentStatus @default(PREPARING)
+  currentLat     Float?
+  currentLng     Float?
+  estimatedArrival DateTime?
+  coldChainLogs  ColdChainLog[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model ColdChainLog {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  sensorId    String
+  temperature Float
+  humidity    Float?
+  timestamp   DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  details   String?  // JSON string of changes
+  timestamp DateTime @default(now())
+}
