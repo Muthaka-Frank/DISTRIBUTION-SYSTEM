@@ -5,9 +5,11 @@ import { OmsModule } from './oms/oms.module';
 import { WmsModule } from './wms/wms.module';
 import { TmsModule } from './tms/tms.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [PrismaModule, OmsModule, WmsModule, TmsModule],
+  imports: [PrismaModule, OmsModule, WmsModule, TmsModule, AuthModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
