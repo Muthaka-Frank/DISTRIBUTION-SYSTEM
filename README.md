@@ -1,135 +1,60 @@
-# Turborepo starter
+# Full Distribution System
 
-This Turborepo starter is maintained by the Turborepo core team.
+A distributed medicine distribution system comprising a Backend API, Admin Dashboard, Customer Portal, and Logistics PWA.
 
-## Using this example
+## 🚀 Getting Started
 
-Run the following command:
-
-```sh
-npx create-turbo@latest
+### 1. Install Dependencies
+Run from the root directory:
+```bash
+npm install
 ```
 
-## What's inside?
+### 2. Database Setup
+Ensure you have PostgreSQL running. The system uses Prisma.
 
-This Turborepo includes the following packages/apps:
+Run migration and seed the database (creates default Admin, Hospital Manager, and Driver users):
+```bash
+# Navigate to the database package
+cd packages/database
 
-### Apps and Packages
+# Run migrations
+npx prisma migrate dev
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+# Seed the database
+npx prisma db seed
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 3. Run the Applications
+You can run the entire system or specific parts using `turbo`.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+**Run Everything (Frontend + Backend):**
+```bash
+npm run dev
+# OR
+npx turbo run dev
 ```
 
-### Develop
+**Run Specific Applications:**
+- **Backend API:** `npx turbo run dev --filter=api` (Port 4000)
+- **Admin Dashboard:** `npx turbo run dev --filter=admin-dashboard` (Port 3000)
+- **Customer Portal:** `npx turbo run dev --filter=customer-portal` (Port 3003)
+- **Logistics PWA:** `npx turbo run dev --filter=logistics-pwa` (Port 3002)
 
-To develop all apps and packages, run the following command:
+## 🔑 Default Credentials
 
-```
-cd my-turborepo
+- **Admin Dashboard:** `admin@hq.com` / `password123`
+- **Customer Portal:** `manager@hospital.com` / `password123`
+- **Logistics Driver:** `driver@logistics.com` / `password123`
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+> **Note:** On first login, you may be prompted to change your password unless you are using the default seeded accounts (which are configured to bypass this).
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+## 🛠 Project Structure
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+- **apps/** (Note: Currently mapped to `Frontend/` and `Backend/` via workspaces)
+  - `api`: NestJS Backend
+  - `admin-dashboard`: Next.js Admin Panel
+  - `customer-portal`: Next.js Hospital Portal
+  - `logistics-pwa`: Next.js Driver App
+- **packages/**
+  - `database`: Prisma schema and client
